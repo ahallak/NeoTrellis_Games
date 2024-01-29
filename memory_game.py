@@ -121,7 +121,7 @@ class Memory_Game:
                     if(len(self.completed_pairs) == self.NUM_BTNS):
                         self.blink_all(self.GREEN)
                         self.completed_pairs.clear()
-                        reset = True
+                        self.reset = True
                 else:
                     print('MISMATCH')
                     self.blink_three(self.event_number_A, event.number, self.RED)
