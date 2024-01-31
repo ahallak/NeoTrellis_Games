@@ -113,7 +113,6 @@ class Memory_Game:
                         break
                     pair_iters_B += 1
                 print('...')
-                time.sleep(0.5)
                 self.allow_input(True)
                 # If match is found...
                 if(self.pair_iters_A == pair_iters_B):
@@ -125,7 +124,8 @@ class Memory_Game:
                         self.blink_all(self.GREEN)
                         self.completed_pairs.clear()
                         self.reset = True
-                else:
+                else:  
+                    time.sleep(0.25)
                     print('MISMATCH')
                     self.blink_three(self.event_number_A, event.number, self.RED)
                     self.trellis.pixels[self.event_number_A] = self.OFF
