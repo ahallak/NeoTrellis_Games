@@ -1,4 +1,5 @@
 A simple memory game for the Adafruit NeoTrellis. Runs on CircuitPython 8.2.9
+I strongly recommend your NeoTrellis has some sort of enclosure for best results [https://www.adafruit.com/product/4352] or 3D print your own. In the least, you'll probably need this silicone elastomer membrane [https://www.adafruit.com/product/1611]
 ## Instructions
 1. Get CircuitPython running on your device [https://learn.adafruit.com/welcome-to-circuitpython/installing-circuitpython]
 2. Copy code.py and memory_game.py to the root of the CIRCUITPY drive
