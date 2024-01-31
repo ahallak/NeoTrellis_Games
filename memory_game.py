@@ -27,7 +27,6 @@ class Memory_Game:
     state = 0 # No enum class in this CircuitPython ver as of 01/2024
     pair_iters_A = 0
     event_number_A = 0
-    lock_input = False
     completed_pairs = []
     reset = True
     trellis = None
@@ -37,15 +36,8 @@ class Memory_Game:
         self.trellis = trellis
         self.NUM_BTNS = num_trellis * BTNS_PER_TRELLIS
         self.NUM_PAIRS = self.NUM_BTNS // 2
-        self.initialize_system()
+        self.allow_input(True)
         self.loop()
-
-    def initialize_system(self):
-        # Initialize devices
-        for i in range(self.NUM_BTNS):
-            self.trellis.activate_key(i, NeoTrellis.EDGE_RISING)
-            self.trellis.activate_key(i, NeoTrellis.EDGE_FALLING)
-            self.trellis.callbacks[i] = self.btn_event
 
     def startup_animation(self):
         for i in range(self.NUM_BTNS):
@@ -86,11 +78,21 @@ class Memory_Game:
             for j in range(self.NUM_BTNS):
                 self.trellis.pixels[j] = self.OFF
             time.sleep(0.05)
+    
+    def allow_input(self, allow):
+        if(allow):
+            for i in range(self.NUM_BTNS):
+                self.trellis.activate_key(i, NeoTrellis.EDGE_RISING)
+                self.trellis.activate_key(i, NeoTrellis.EDGE_FALLING)
+                self.trellis.callbacks[i] = self.btn_event
+        else:
+            for i in range(self.NUM_BTNS):
+                self.trellis.activate_key(i, NeoTrellis.EDGE_RISING, enable=False)
+                self.trellis.activate_key(i, NeoTrellis.EDGE_FALLING, enable=False)
+                self.trellis.callbacks[i] = None
 
     # Button Event Handler
     def btn_event(self, event):
-        if(self.lock_input):
-            return
         if (event.edge == NeoTrellis.EDGE_RISING and not(event.number in self.completed_pairs)):
             if(self.state == 0): #First button pressed
                 self.pair_iters_A = 0
@@ -103,7 +105,7 @@ class Memory_Game:
                 self.event_number_A = event.number
                 self.state = 1
             elif(self.state == 1 and (event.number != self.event_number_A)): # dont press same btn twice
-                self.lock_input = True
+                self.allow_input(False)
                 pair_iters_B = 0
                 for i,j in self.pairs:
                     if(event.number == i or event.number == j):
@@ -112,6 +114,7 @@ class Memory_Game:
                     pair_iters_B += 1
                 print('...')
                 time.sleep(0.5)
+                self.allow_input(True)
                 # If match is found...
                 if(self.pair_iters_A == pair_iters_B):
                     print('MATCH')
@@ -128,7 +131,6 @@ class Memory_Game:
                     self.trellis.pixels[self.event_number_A] = self.OFF
                     self.trellis.pixels[event.number] = self.OFF
                 self.state = 0
-                self.lock_input = False
     
     def loop(self):
         while True:
